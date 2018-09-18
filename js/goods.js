@@ -1,5 +1,5 @@
 'use strict';
-// data
+// util
 var PRODUCTS_LIST = ['Чесночные сливки', 'Oгуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие', 'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка', 'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа', 'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет', 'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное', 'Острый язычок'];
 var PRODUCTS_IMAGES = ['img/cards/gum-cedar.jpg', 'img/cards/ice-cucumber.jpg', 'img/cards/marmalade-beer.jpg', 'img/cards/marshmallow-beer.jpg', 'img/cards/soda-cob.jpg', 'img/cards/gum-chile.jpg', 'img/cards/ice-eggplant.jpg', 'img/cards/marmalade-caviar.jpg', 'img/cards/marshmallow-shrimp.jpg', 'img/cards/soda-garlic.jpg', 'img/cards/gum-eggplant.jpg', 'img/cards/ice-garlic.jpg', 'img/cards/marmalade-corn.jpg', 'img/cards/marshmallow-spicy.jpg', 'img/cards/soda-peanut-grapes.jpg', 'img/cards/gum-mustard.jpg', 'img/cards/ice-italian.jpg', 'img/cards/marmalade-new-year.jpg', 'img/cards/marshmallow-wine.jpg', 'img/cards/soda-russian.jpg', 'img/cards/gum-portwine.jpg', 'img/cards/ice-mushroom.jpg', 'img/cards/marmalade-sour.jpg', 'img/cards/soda-bacon.jpg', 'img/cards/gum-wasabi.jpg', 'img/cards/ice-pig.jpg', 'img/cards/marshmallow-bacon.jpg', 'img/cards/soda-celery.jpg'];
 var PRODUCTS_CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
@@ -57,11 +57,12 @@ var createProductCards = function (counts) {
   return products; // вызываем
 };
 
-
+// ///////////////////////////////////////////////////////////////////////////////////
 var CARDS_QUANTITY = 26;
 var CART_COUNT = 3;
 // функция генерирующая массив зависит от продукта(нет продукта - нет функции)
 // Напишите функцию, для создания массива из 26 сгенерированных объектов.
+
 var getProductCard = function (product, catalogCardTemplate) {
   var userCard = catalogCardTemplate.cloneNode(true); // копирую узел
   // создайте DOM-элементы, соответствующие товарам и заполните их данными из массива
@@ -96,19 +97,20 @@ var getProductCard = function (product, catalogCardTemplate) {
   return userCard;
 };
 
+var catalogCards = document.querySelector('.catalog__cards');
+
 var renderProductCards = function (products) {
-  var catalogCards = document.querySelector('.catalog__cards');
-  catalogCards.classList.remove('catalog__cards--load');
+  catalogCards.classList.remove('catalog__cards--load'); // удаляется класс и карточки видны
   var catalogLoad = document.querySelector('.catalog__load');
   catalogLoad.classList.add('visually-hidden');
   var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < products.length; i++) {
-    fragment.appendChild(getProductCard(products[i], catalogCardTemplate)); // клеиваем шаблоны
+    fragment.appendChild(getProductCard(products[i], catalogCardTemplate)); // вклеиваем шаблоны
   }
   catalogCards.appendChild(fragment);
 };
-// корзина по аналогии
+// корзина по аналогии card-order корзина
 var getCartItem = function (product, cartItemTemplate) {
   var cartItem = cartItemTemplate.cloneNode(true);
   cartItem.querySelector('.card-order__title').textContent = product.name;
@@ -135,3 +137,33 @@ var renderCart = function (products) {
 renderProductCards(createProductCards(CARDS_QUANTITY));
 
 renderCart(createProductCards(CART_COUNT));
+
+// EVENTS
+
+// переключение вкладок в форме оформления заказа;
+// первая фаза работы фильтра по цене.
+
+// добавление выбранного товара в избранное;
+// При нажатии на кнопку избранного .card__btn-favorite в карточке товара,
+// этой кнопке должен добавляться класс, который помечал бы её как избранную классом card__btn-favorite--selected.
+var linkCardFavorite = document.querySelector('.card__btn-favorite');
+linkCardFavorite.addEventListener('click', function (evt) { // отслеживаем клик на элементе
+  evt.preventDefault(); // отменить событие чтобы не висело в памяти
+  linkCardFavorite.classList.toggle('card__btn-favorite--selected');
+});
+
+// Показывает и скрывает состав
+
+catalogCards.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  var cardMain = evt.target.closest('.card__main');
+  var composition = cardMain.querySelector('.card__composition');
+  composition.classList.toggle('card__composition--hidden');
+});
+
+// 2. Добавление выбранного товара в корзину и управление товаром в корзине
+// удаление товара из корзины;
+// управление количеством определенного товара в корзине; Если есть то увеличивается на 1 card-order__btn--increase
+// При клике по card__btn массив копируется в массив корзины.
+
+var cardBtn = document.querySelector('card__btn');
