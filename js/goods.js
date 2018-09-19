@@ -1,5 +1,5 @@
 'use strict';
-// goods
+
 var MIN_AMOUT = 0;
 var MAX_AMOUT = 20;
 var MIN_PRICE = 100;
@@ -12,16 +12,13 @@ var MIN_NUMBER = 10;
 var MAX_NUMBER = 900;
 var MIN_ENERGY = 70;
 var MAX_ENERGY = 500;
-var CARDS_QUANTITY = 26;
+var MAX_CARDS = 26;
 
-var PRODUCTS_LIST = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие', 'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка', 'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа', 'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет', 'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное', 'Острый язычок' ];
-var PRODUCTS_IMAGES = ['gum-cedar', 'gum-chile', 'gum-eggplant', 'gum-mustard', 'gum-portwine', 'gum-wasabi', 'ice-cucumber', 'ice-eggplant', 'ice-garlic', 'ice-italian', 'ice-mushroom', 'ice-pig', 'marmalade-beer', 'marmalade-caviar', 'marmalade-corn', 'marmalade-new-year', 'marmalade-sour', 'marshmallow-bacon', 'marshmallow-beer', 'marshmallow-shrimp', 'marshmallow-spicy', 'marshmallow-wine', 'soda-bacon', 'soda-celery', 'soda-cob', 'soda-garlic', 'soda-peanut-grapes', 'soda-russian'];
-var PRODUCTS_CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо' ];
-// новый массив
-var products = [];
 
-// Объект для рейтинга
-var ratings = {
+var PRODUCTS_LIST = ['Чесночные сливки', 'Oгуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие', 'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка', 'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа', 'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет', 'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное', 'Острый язычок'];
+var PRODUCTS_IMAGES = ['img/cards/gum-cedar.jpg', 'img/cards/ice-cucumber.jpg', 'img/cards/marmalade-beer.jpg', 'img/cards/marshmallow-beer.jpg', 'img/cards/soda-cob.jpg', 'img/cards/gum-chile.jpg', 'img/cards/ice-eggplant.jpg', 'img/cards/marmalade-caviar.jpg', 'img/cards/marshmallow-shrimp.jpg', 'img/cards/soda-garlic.jpg', 'img/cards/gum-eggplant.jpg', 'img/cards/ice-garlic.jpg', 'img/cards/marmalade-corn.jpg', 'img/cards/marshmallow-spicy.jpg', 'img/cards/soda-peanut-grapes.jpg', 'img/cards/gum-mustard.jpg', 'img/cards/ice-italian.jpg', 'img/cards/marmalade-new-year.jpg', 'img/cards/marshmallow-wine.jpg', 'img/cards/soda-russian.jpg', 'img/cards/gum-portwine.jpg', 'img/cards/ice-mushroom.jpg', 'img/cards/marmalade-sour.jpg', 'img/cards/soda-bacon.jpg', 'img/cards/gum-wasabi.jpg', 'img/cards/ice-pig.jpg', 'img/cards/marshmallow-bacon.jpg', 'img/cards/soda-celery.jpg'];
+var PRODUCTS_CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
+var RATINGS = {
   1: 'one',
   2: 'two',
   3: 'three',
@@ -29,16 +26,15 @@ var ratings = {
   5: 'five'
 };
 
-var sugar = ['true', 'false'];
+// Новый массив
+var cards = [];
 
+var getRandomValue = function (min, max) {
+  return Math.round(Math.random() * (max - min)) + min;
+};
 
 var getRandomBool = function () {
   return Math.random() >= 0.5;
-};
-
-// Функция для получения случайного значения из диапазона
-var getRandomValue = function (min, max) {
-  return Math.round(Math.random() * (max - min)) + min;
 };
 
 // Получаем случайные значения их массивов
@@ -48,12 +44,6 @@ var takeRandomElement = function (arr) {
   arr.splice(i, 1);
   return randomElement;
 };
-
-// Функция для получения случайного изображения
-var getRandomPicture = function () {
-  return 'img/cards/' + takeRandomElement(PRODUCTS_IMAGES) + '.jpg';
-};
-
 
 // Функция для получени нескольких значений и склеивания
 var getRandomContents = function () {
@@ -68,10 +58,10 @@ var getRandomContents = function () {
 };
 
 // Функция для создания карточки
-var createProductCards = function () {
+var getCard = function () {
   return {
     name: takeRandomElement(PRODUCTS_LIST),
-    picture: getRandomPicture(),
+    picture: PRODUCTS_IMAGES[getRandomValue(0, PRODUCTS_IMAGES.length)],
     amount: getRandomValue(MIN_AMOUT, MAX_AMOUT),
     price: getRandomValue(MIN_PRICE, MAX_PRICE),
     weight: getRandomValue(MIN_WEIGHT, MAX_WEIGHT),
@@ -80,7 +70,7 @@ var createProductCards = function () {
       number: getRandomValue(MIN_NUMBER, MAX_NUMBER)
     },
     nutritionFacts: {
-      sugar: getRandomBool(sugar),
+      sugar: getRandomBool(),
       energy: getRandomValue(MIN_ENERGY, MAX_ENERGY),
       contents: getRandomContents()
     }
@@ -89,19 +79,19 @@ var createProductCards = function () {
 
 // Функция для создания массива карточек
 var fillArray = function () {
-  for (var i = 1; i <= CARDS_QUANTITY; i++) {
-    products.push(createProductCards());
+  for (var i = 1; i <= MAX_CARDS; i++) {
+    cards.push(getCard());
   }
-  return products;
+  return cards;
 };
 
-// ============================================
+// goods
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 var catalogLoad = catalogCards.querySelector('.catalog__load');
 catalogLoad.classList.add('visually-hidden');
 
-// Классы в зависимости от значения по заданию
+// Определяем классы в завсисимости от значения
 var addClassByAmount = function (amount) {
   var cardClass;
   if (amount > 5) {
@@ -115,7 +105,7 @@ var addClassByAmount = function (amount) {
 };
 
 // Отрисовывает карточки
-var createCards = function (cardData) {
+var createUserCards = function (cardData) {
   var fragment = document.createDocumentFragment();
   cardData.forEach(function (item) {
     var userCard = document.querySelector('#card').content.cloneNode(true);
@@ -124,15 +114,24 @@ var createCards = function (cardData) {
     var cardWeight = userCard.querySelector('.card__weight');
     userCard.querySelector('.catalog__card').classList.remove('card--in-stock');
     userCard.querySelector('.catalog__card').classList.add(addClassByAmount(item.amount));
-    userCard.querySelector('.card__img').src = item.picture;
+
+    var productImage = userCard.querySelector('.card__img');
+    productImage.src = item.picture;
+    productImage.alt = item.name;
+
     userCard.querySelector('.card__title').textContent = item.name;
     cardPrice.textContent = item.price;
     cardPrice.appendChild(cardCurrency);
     cardPrice.appendChild(cardWeight);
     userCard.querySelector('.card__weight').textContent = '/ ' + item.weight + ' Г';
-    userCard.querySelector('.stars__rating').classList.remove('stars__rating--five');
-    userCard.querySelector('.stars__rating').classList.add(ratings[item.rating.value]);
+    var productRating = userCard.querySelector('.stars__rating');
+    if (item.rating.value < 5) {
+      productRating.classList.remove('stars__rating--five');
+      productRating.classList.add('stars__rating--' + RATINGS[item.rating.value]);
+      productRating.textContent = item.rating.value > 1 ? 'Рейтинг: ' + item.rating.value + ' звёзды' : 'Рейтинг: ' + item.rating.value + ' звёзда';
+    }
     userCard.querySelector('.star__count').textContent = item.rating.number;
+
     var cardCharacteristic = item.nutritionFacts.sugar ? 'Содержит сахар. ' : 'Без сахара. ';
     cardCharacteristic += item.nutritionFacts.energy + ' ккал';
     userCard.querySelector('.card__characteristic').textContent = cardCharacteristic;
@@ -143,14 +142,14 @@ var createCards = function (cardData) {
   return fragment;
 };
 
-catalogCards.appendChild(createCards(fillArray()));
+catalogCards.appendChild(createUserCards(fillArray()));
 
-// Отрисовываем товары в корзине
+// Отрисовка карточек в  в корзине
 
 var goodsCards = document.querySelector('.goods__cards');
 var goodsCardEmpty = goodsCards.querySelector('.goods__card-empty');
 
-// добавить и бурать в избранное
+// Добавляет и убирает классы в избранное
 catalogCards.addEventListener('click', function (evt) {
   evt.preventDefault();
   var target = evt.target.closest('.card__btn-favorite');
@@ -172,6 +171,13 @@ catalogCards.addEventListener('click', function (evt) {
   composition.classList.toggle('card__composition--hidden');
 });
 
+// Добавляет и убирает классы сообщения о наличии товара в корзине
+var alertMessage = function () {
+  var article = document.querySelector('.goods_card');
+  goodsCards.classList.toggle('goods__cards--empty', article === null);
+  goodsCardEmpty.classList.toggle('visually-hidden', article !== null);
+};
+
 var order = document.querySelector('.order');
 var inputs = order.querySelectorAll('input');
 
@@ -185,18 +191,11 @@ var addDisabledForInput = function () {
 
 addDisabledForInput();
 
-// Выводит и убирает сообщение о наличии товара в корзине
-var alertMessage = function () {
-  var article = document.querySelector('.goods_card');
-  goodsCards.classList.toggle('goods__cards--empty', article === null);
-  goodsCardEmpty.classList.toggle('visually-hidden', article !== null);
-};
-
 var addButtons = document.querySelectorAll('.card__btn');
 var cardsOnCatalog = catalogCards.querySelectorAll('.catalog__card');
 
 // Создает карточку товара в корзине
-var createAddToBasketHandler = function (i) {
+var addBasketHandler = function (i) {
   return function (evt) {
     addToBasket(cardsOnCatalog[i], i);
     evt.preventDefault();
@@ -206,14 +205,14 @@ var createAddToBasketHandler = function (i) {
 };
 
 // Добавляет товары в корзину при клике на кнопку добавить
-var addBasketAdditionHandlers = function () {
+var addBasketBtnHandler = function () {
   for (var i = 0; i < addButtons.length; i++) {
-    addButtons[i].addEventListener('click', createAddToBasketHandler(i));
+    addButtons[i].addEventListener('click', addBasketHandler(i));
   }
 };
+addBasketBtnHandler();
 
-addBasketAdditionHandlers();
-
+// evt ///////////////////////
 // Удаляет товары из корзины
 goodsCards.addEventListener('click', function (evt) {
   evt.preventDefault();
@@ -243,9 +242,9 @@ goodsCards.addEventListener('click', function (evt) {
 // Уменьшает кол-во товаров в корзине
 goodsCards.addEventListener('click', function (evt) {
   evt.preventDefault();
-  var target = evt.target.closest('.card-order__btn--decrease');
   var card = evt.target.closest('.card-order__amount');
   var value = card.querySelector('.card-order__count');
+  var target = evt.target.closest('.card-order__btn--decrease');
   if (target === null) {
     return;
   } else if (value.value > 1) {
@@ -263,7 +262,7 @@ var increaseValue = function (value) {
   value.value++;
 };
 
-// Добавляет дата атрибуты
+// Добавляет id
 var addDataAtribute = function () {
   for (var i = 0; i < cardsOnCatalog.length; i++) {
     cardsOnCatalog[i].setAttribute('data-id', i + 1);
@@ -271,11 +270,11 @@ var addDataAtribute = function () {
 };
 addDataAtribute();
 
-// Добавляет карточки в корзину, если есть повтор, увеличивает значение
+// Добавляет карточки в корзину и проверяет наличие в корзине. Если она есть добавляет 1 шт к уже существующей
 var addToBasket = function (target, i) {
   var dataAttribute = goodsCards.querySelector('[data-id="' + target.dataset.id + '"]');
   if (dataAttribute === null) {
-    var cardsBasket = products[i];
+    var cardsBasket = cards[i];
     var cardBasketElement = document.querySelector('#card-order').content.cloneNode(true);
     cardBasketElement.querySelector('.card-order__title').textContent = cardsBasket.name;
     cardBasketElement.querySelector('.card-order__img').src = cardsBasket.picture;
@@ -289,7 +288,6 @@ var addToBasket = function (target, i) {
 };
 
 // Показывает и скрывает форму оплаты
-
 var payment = document.querySelector('.payment');
 var paymentCard = payment.querySelector('.payment__card-wrap');
 var paymentCash = payment.querySelector('.payment__cash-wrap');
@@ -323,22 +321,20 @@ var addDisabledForInputPayment = function () {
 };
 
 // Переключает вкладки в блоке доставки
-
 var delivery = document.querySelector('.deliver');
 var store = delivery.querySelector('.deliver__store');
 var courier = delivery.querySelector('.deliver__courier');
-var btnStore = delivery.querySelector('input#deliver__store');
-var btnCourier = delivery.querySelector('input#deliver__courier');
 var fieldsetStore = store.querySelector('.deliver__stores');
 var fieldsetCourier = courier.querySelector('.deliver__entry-fields-wrap');
 
-
+var btnStore = delivery.querySelector('input#deliver__store');
 btnStore.addEventListener('click', function () {
   addClassForDelivery();
 });
 
+var btnCourier = delivery.querySelector('input#deliver__courier');
 btnCourier.addEventListener('click', function () {
-    addClassForDelivery();
+  addClassForDelivery();
 });
 
 var addClassForDelivery = function () {
@@ -354,3 +350,5 @@ var addDisabledForFieldsetDelivery = function () {
 };
 
 addDisabledForFieldsetDelivery();
+
+// бегунок
