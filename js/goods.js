@@ -307,14 +307,14 @@ btnCard.addEventListener('click', function () {
 var addClassForPayment = function () {
   paymentCash.classList.toggle('visually-hidden', btnCard.checked === true);
   paymentCard.classList.toggle('visually-hidden', btnCash.checked === true);
-  addDisabledForInputPayment();
+  addDisabledPay();
 };
 
 
 var inputsPayment = paymentInputs.querySelectorAll('input');
 
 // Добавляет и убирает атрибут disabled на инпуты
-var addDisabledForInputPayment = function () {
+var addDisabledPay = function () {
   for (var i = 0; i < inputsPayment.length; i++) {
     inputsPayment[i].disabled = btnCash.checked === true;
   }
@@ -324,31 +324,106 @@ var addDisabledForInputPayment = function () {
 var delivery = document.querySelector('.deliver');
 var store = delivery.querySelector('.deliver__store');
 var courier = delivery.querySelector('.deliver__courier');
-var fieldsetStore = store.querySelector('.deliver__stores');
-var fieldsetCourier = courier.querySelector('.deliver__entry-fields-wrap');
+var deliverStores = store.querySelector('.deliver__stores');
+var deliverEntry = courier.querySelector('.deliver__entry-fields-wrap');
 
 var btnStore = delivery.querySelector('input#deliver__store');
 btnStore.addEventListener('click', function () {
-  addClassForDelivery();
+  addClassDelivery();
 });
 
 var btnCourier = delivery.querySelector('input#deliver__courier');
 btnCourier.addEventListener('click', function () {
-  addClassForDelivery();
+  addClassDelivery();
 });
 
-var addClassForDelivery = function () {
+var addClassDelivery = function () {
   courier.classList.toggle('visually-hidden', btnStore.checked === true);
   store.classList.toggle('visually-hidden', btnCourier.checked === true);
-  addDisabledForFieldsetDelivery();
+  addDisabledDelivery();
 };
 
 // Добавляет и убирает атрибут disabled на инпуты в блоке доставки
-var addDisabledForFieldsetDelivery = function () {
-  fieldsetCourier.disabled = btnCourier.checked === false;
-  fieldsetStore.disabled = btnCourier.checked === true;
+var addDisabledDelivery = function () {
+  deliverEntry.disabled = btnCourier.checked === false;
+  deliverStores.disabled = btnCourier.checked === true;
 };
 
-addDisabledForFieldsetDelivery();
+addDisabledDelivery();
 
 // бегунок
+
+var sliderElem = document.querySelector('.range__filter');
+var thumbMin = document.querySelector('.range__btn--left');
+var thumbMax = document.querySelector('.range__btn--right');
+var sliderCoords = getCoords(sliderElem);
+var rangeEnd = sliderElem.offsetWidth - thumbMin.offsetWidth;
+/*
+var min = parseInt(getComputedStyle(thumbMin).left, 10);
+var max = parseInt(getComputedStyle(thumbMax).left, 10);
+ */
+var min = parseInt(0, 10);
+var max = parseInt(100, 10);
+
+thumbMin.onmousedown = function (e) {
+  var thumbCoords = getCoords(thumbMin);
+  var shiftX = e.pageX - thumbCoords.left;
+
+
+  document.onmousemove = function (e) {
+    var newLeft = e.pageX - shiftX - sliderCoords.left;
+    if (newLeft < 0) {
+      newLeft = 0;
+    }
+
+    if (newLeft > max - thumbMin.offsetWidth / 2) {
+      newLeft = max - thumbMin.offsetWidth / 2;
+    }
+
+    min = newLeft;
+    thumbMin.style.left = newLeft + 'px';
+  };
+
+  document.onmouseup = function () {
+    document.onmousemove = document.onmouseup = null;
+  };
+  return false;
+};
+
+thumbMax.onmousedown = function (e) {
+  var thumbCoords = getCoords(thumbMax);
+  var shiftX = e.pageX - thumbCoords.left;
+
+  document.onmousemove = function (e) {
+    var newLeft = e.pageX - shiftX - sliderCoords.left;
+
+    // если вне слайдера
+    if (newLeft < min + thumbMin.offsetWidth / 2) {
+      newLeft = min + thumbMin.offsetWidth / 2;
+    }
+
+    if (newLeft > rangeEnd) {
+      newLeft = rangeEnd;
+    }
+    max = newLeft;
+
+    thumbMax.style.left = newLeft + 'px';
+  };
+  document.onmouseup = function () {
+    document.onmousemove = document.onmouseup = null;
+  };
+  return false;
+};
+
+thumbMin.ondragstart = function() {
+  return false;
+};
+
+function getCoords(elem) {
+  var box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + pageYOffset,
+    left: box.left + pageXOffset
+  };
+}
