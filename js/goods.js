@@ -1,5 +1,5 @@
 'use strict';
-
+// .............................................................................................goods
 var MIN_AMOUT = 0;
 var MAX_AMOUT = 20;
 var MIN_PRICE = 100;
@@ -14,7 +14,6 @@ var MIN_ENERGY = 70;
 var MAX_ENERGY = 500;
 var MAX_CARDS = 26;
 
-
 var PRODUCTS_LIST = ['Чесночные сливки', 'Oгуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие', 'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка', 'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа', 'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет', 'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное', 'Острый язычок'];
 var PRODUCTS_IMAGES = ['img/cards/gum-cedar.jpg', 'img/cards/ice-cucumber.jpg', 'img/cards/marmalade-beer.jpg', 'img/cards/marshmallow-beer.jpg', 'img/cards/soda-cob.jpg', 'img/cards/gum-chile.jpg', 'img/cards/ice-eggplant.jpg', 'img/cards/marmalade-caviar.jpg', 'img/cards/marshmallow-shrimp.jpg', 'img/cards/soda-garlic.jpg', 'img/cards/gum-eggplant.jpg', 'img/cards/ice-garlic.jpg', 'img/cards/marmalade-corn.jpg', 'img/cards/marshmallow-spicy.jpg', 'img/cards/soda-peanut-grapes.jpg', 'img/cards/gum-mustard.jpg', 'img/cards/ice-italian.jpg', 'img/cards/marmalade-new-year.jpg', 'img/cards/marshmallow-wine.jpg', 'img/cards/soda-russian.jpg', 'img/cards/gum-portwine.jpg', 'img/cards/ice-mushroom.jpg', 'img/cards/marmalade-sour.jpg', 'img/cards/soda-bacon.jpg', 'img/cards/gum-wasabi.jpg', 'img/cards/ice-pig.jpg', 'img/cards/marshmallow-bacon.jpg', 'img/cards/soda-celery.jpg'];
 var PRODUCTS_CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца', 'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор', 'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит', 'карбамид', 'вилларибо', 'виллабаджо'];
@@ -26,7 +25,6 @@ var RATINGS = {
   5: 'five'
 };
 
-// Новый массив
 var cards = [];
 
 var getRandomValue = function (min, max) {
@@ -85,7 +83,6 @@ var fillArray = function () {
   return cards;
 };
 
-// goods
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 var catalogLoad = catalogCards.querySelector('.catalog__load');
@@ -144,10 +141,6 @@ var createUserCards = function (cardData) {
 
 catalogCards.appendChild(createUserCards(fillArray()));
 
-// Отрисовка карточек в  в корзине
-
-var goodsCards = document.querySelector('.goods__cards');
-var goodsCardEmpty = goodsCards.querySelector('.goods__card-empty');
 
 // Добавляет и убирает классы в избранное
 catalogCards.addEventListener('click', function (evt) {
@@ -171,6 +164,11 @@ catalogCards.addEventListener('click', function (evt) {
   composition.classList.toggle('card__composition--hidden');
 });
 
+// ..........................................................................................................basket
+// Отрисовка карточек в  в корзине
+var goodsCards = document.querySelector('.goods__cards');
+var goodsCardEmpty = goodsCards.querySelector('.goods__card-empty');
+
 // Добавляет и убирает классы сообщения о наличии товара в корзине
 var alertMessage = function () {
   var article = document.querySelector('.goods_card');
@@ -181,15 +179,14 @@ var alertMessage = function () {
 var order = document.querySelector('.order');
 var inputs = order.querySelectorAll('input');
 
-// Добавляет и убирает атрибут disabled на инпуты
-var addDisabledForInput = function () {
+// Добавляет и убирает атрибут disabled
+var addDisabledInput = function () {
   var article = document.querySelector('.goods_card');
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].disabled = (article === null);
   }
 };
-
-addDisabledForInput();
+addDisabledInput();
 
 var addButtons = document.querySelectorAll('.card__btn');
 var cardsOnCatalog = catalogCards.querySelectorAll('.catalog__card');
@@ -200,7 +197,7 @@ var addBasketHandler = function (i) {
     addToBasket(cardsOnCatalog[i], i);
     evt.preventDefault();
     alertMessage();
-    addDisabledForInput();
+    addDisabledInput();
   };
 };
 
@@ -212,7 +209,6 @@ var addBasketBtnHandler = function () {
 };
 addBasketBtnHandler();
 
-// evt ///////////////////////
 // Удаляет товары из корзины
 goodsCards.addEventListener('click', function (evt) {
   evt.preventDefault();
@@ -223,9 +219,8 @@ goodsCards.addEventListener('click', function (evt) {
   var targetCard = evt.target.closest('.card-order');
   goodsCards.removeChild(targetCard);
   alertMessage();
-  addDisabledForInput();
+  addDisabledInput();
 });
-
 
 // Увеличивает кол-во товаров в корзине
 goodsCards.addEventListener('click', function (evt) {
@@ -253,7 +248,7 @@ goodsCards.addEventListener('click', function (evt) {
     var targetCard = evt.target.closest('.card-order');
     goodsCards.removeChild(targetCard);
     alertMessage();
-    addDisabledForInput();
+    addDisabledInput();
   }
 });
 
@@ -287,6 +282,7 @@ var addToBasket = function (target, i) {
   }
 };
 
+// ...................................................................... pay
 // Показывает и скрывает форму оплаты
 var payment = document.querySelector('.payment');
 var paymentCard = payment.querySelector('.payment__card-wrap');
@@ -295,7 +291,34 @@ var btnCard = payment.querySelector('input#payment__card');
 var btnCash = payment.querySelector('input#payment__cash');
 var paymentInputs = payment.querySelector('.payment__inputs');
 
+// переключение формы карточка - наличка
+var basketGoods = [];
 
+var togglePayForm = function (form, enable) {
+  form.querySelectorAll('input').forEach(function (input) {
+    input.removeAttribute('disabled');
+    if (!enable) {
+      input.setAttribute('disabled', undefined);
+  }
+});
+  form.querySelectorAll('fieldset').forEach(function (input) {
+    input.removeAttribute('disabled');
+    if (!enable) {
+      input.setAttribute('disabled', undefined);
+    }
+  });
+};
+
+var form = document.querySelector('.buy form');
+if (basket.length > 0) {
+  goodsCards.classList.remove('goods__cards--empty');
+  togglePayForm(form, true);
+} else {
+  togglePayForm(form, false);
+}
+
+
+// проверка номера карты
 btnCash.addEventListener('click', function () {
   addClassForPayment();
 });
@@ -305,14 +328,13 @@ btnCard.addEventListener('click', function () {
 });
 
 var addClassForPayment = function () {
-  paymentCash.classList.toggle('visually-hidden', btnCard.checked === true);
+  paymentCash.classList.toggle('visually-hidden', btnCard.checked === true); // сообщение валюту не предлагать
   paymentCard.classList.toggle('visually-hidden', btnCash.checked === true);
   addDisabledPay();
 };
 
 
 var inputsPayment = paymentInputs.querySelectorAll('input');
-
 // Добавляет и убирает атрибут disabled на инпуты
 var addDisabledPay = function () {
   for (var i = 0; i < inputsPayment.length; i++) {
@@ -320,13 +342,16 @@ var addDisabledPay = function () {
   }
 };
 
+
+
+
+
 // Переключает вкладки в блоке доставки
 var delivery = document.querySelector('.deliver');
 var store = delivery.querySelector('.deliver__store');
 var courier = delivery.querySelector('.deliver__courier');
 var deliverStores = store.querySelector('.deliver__stores');
 var deliverEntry = courier.querySelector('.deliver__entry-fields-wrap');
-
 var btnStore = delivery.querySelector('input#deliver__store');
 btnStore.addEventListener('click', function () {
   addClassDelivery();
@@ -351,8 +376,7 @@ var addDisabledDelivery = function () {
 
 addDisabledDelivery();
 
-// бегунок
-
+// бегунок ..................................................................................................
 var sliderElem = document.querySelector('.range__filter');
 var thumbMin = document.querySelector('.range__btn--left');
 var thumbMax = document.querySelector('.range__btn--right');
@@ -361,7 +385,7 @@ var rangeEnd = sliderElem.offsetWidth - thumbMin.offsetWidth;
 /*
 var min = parseInt(getComputedStyle(thumbMin).left, 10);
 var max = parseInt(getComputedStyle(thumbMax).left, 10);
- */
+
 var min = parseInt(0, 10);
 var max = parseInt(100, 10);
 
@@ -427,3 +451,84 @@ function getCoords(elem) {
     left: box.left + pageXOffset
   };
 }
+*/
+var rangeFilter = document.querySelector('.range__filter');
+var priceRangeFilterLeft = rangeFilter.querySelector('.range__btn--left');
+var priceRangeFilterRight = rangeFilter.querySelector('.range__btn--right');
+var priceRangeFilterLine = rangeFilter.querySelector('.range__fill-line');
+var filterMinPrice;
+var filterMaxPrice;
+var minX = rangeFilter.clientLeft;
+var maxX = rangeFilter.clientLeft + rangeFilter.clientWidth;
+var TOTAL_MAX_PRICE = 1500;
+var MIN_PRICE = TOTAL_MAX_PRICE;
+var updatePriceFilter = function () {
+    document.querySelector('.range__prices .range__price--min').textContent = filterMinPrice;
+    document.querySelector('.range__prices .range__price--max').textContent = filterMaxPrice;
+};
+var renderCatalog = function () {
+    var catalog = document.querySelector('.catalog__cards');
+    catalog.querySelectorAll('.catalog__card').forEach(function (child) {
+        catalog.removeChild(child);
+    });
+var calcFilterValue = function (element, shift) {
+    var filterLeft = (element.offsetLeft - shift);
+    if (filterLeft > maxX) {
+        filterLeft = maxX;
+    }
+    if (filterLeft < minX) {
+        filterLeft = minX;
+    }
+    return Math.round((TOTAL_MAX_PRICE * filterLeft) / rangeFilter.clientWidth);
+};
+priceRangeFilterRight.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startX = evt.clientX;
+    var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+        var shift = startX - moveEvt.clientX;
+        startX = moveEvt.clientX;
+        var filterValue = calcFilterValue(priceRangeFilterRight, shift);
+        filterValue = (filterValue < filterMinPrice) ? filterMinPrice : filterValue;
+        var percentLeft = (filterValue * 100) / TOTAL_MAX_PRICE;
+        priceRangeFilterRight.style.left = percentLeft + '%';
+        priceRangeFilterLine.style.right = (100 - percentLeft) + '%';
+        filterMaxPrice = filterValue;
+    };
+    var onMouseUp = function (upEvt) {
+        updatePriceFilter();
+        renderCatalog();
+        upEvt.preventDefault();
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+});
+
+priceRangeFilterLeft.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startX = evt.clientX;
+    var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+        var shift = startX - moveEvt.clientX;
+        startX = moveEvt.clientX;
+        var filterValue = calcFilterValue(priceRangeFilterLeft, shift);
+        filterValue = (filterValue > filterMaxPrice) ? filterMaxPrice : filterValue;
+        var percentLeft = (filterValue * 100) / TOTAL_MAX_PRICE;
+        priceRangeFilterLeft.style.left = percentLeft + '%';
+        priceRangeFilterLine.style.left = priceRangeFilterLeft.style.left;
+        filterMinPrice = filterValue;
+    };
+
+    var onMouseUp = function (upEvt) {
+        updatePriceFilter();
+        renderCatalog();
+        upEvt.preventDefault();
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+});
