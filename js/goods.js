@@ -352,7 +352,6 @@ var addDisabledDelivery = function () {
 addDisabledDelivery();
 
 // бегунок
-
 var priceHandlerLeft = document.querySelector('.range__btn--left');
 var priceHandlerRight = document.querySelector('.range__btn--right');
 var priceFillLine = document.querySelector('.range__fill-line');
