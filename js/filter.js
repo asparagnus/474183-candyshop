@@ -1,20 +1,20 @@
 'use strict';
 
 (function () {
-  // ФИЛЬТР ПО ЦЕНЕ:
-  var rangeFilter = document.querySelector('.range__filter'); // Блок слайдера
-  var rangeFillLine = rangeFilter.querySelector('.range__fill-line'); // Ползунок слайдера
-  var rangePricePinLeft = rangeFilter.querySelector('.range__btn--left'); // Левый пин
-  var rangePricePinRight = rangeFilter.querySelector('.range__btn--right'); // Правый пин
+  // Ползунок
+  var rangeFilter = document.querySelector('.range__filter');
+  var rangeFillLine = rangeFilter.querySelector('.range__fill-line');
+  var rangePricePinLeft = rangeFilter.querySelector('.range__btn--left'); // Левый
+  var rangePricePinRight = rangeFilter.querySelector('.range__btn--right'); // Правый
 
-  var mouseDownHandler = function (downEvt) { // Обработчик mouseDown
+  var mouseDownHandler = function (downEvt) {
     downEvt.preventDefault();
     var currentPin = null;
     var anotherPin = null;
     var isLeft = true; // Левый или правый пин
     var rangeFillLineMiddle = rangeFilter.offsetLeft + rangeFillLine.offsetLeft + rangeFillLine.offsetWidth / 2; // Расстояние до середины ползунка
     if (downEvt.clientX <= rangeFillLineMiddle) { // Если ближе середины ползунка
-      currentPin = rangePricePinLeft; // то левый пин
+      currentPin = rangePricePinLeft; // левый пин
       anotherPin = rangePricePinRight;
     } else if (downEvt.clientX > rangeFillLineMiddle) { // иначе
       currentPin = rangePricePinRight; // правый пин
@@ -25,13 +25,12 @@
     var mouseMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
       if (moveEvt.clientX >= rangeFilter.offsetLeft && moveEvt.clientX <= rangeFilter.offsetLeft + rangeFilter.offsetWidth && currentPin.offsetLeft !== anotherPin.offsetLeft) { // Ограничение движения ползунка за пределы ширины слайдера и друг друга
-        if (isLeft) { // Если левый пин
+        if (isLeft) { // левый пин
           setPriceRange(currentPin, moveEvt, 'min', true);
-        } else { // Если правый пин
+        } else { // правый пин
           setPriceRange(currentPin, moveEvt, 'max', false);
         }
       } else {
-        // document.removeEventListener('mouseup', mouseUpHandler);
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
       }
