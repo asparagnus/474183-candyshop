@@ -1,30 +1,31 @@
 'use strict';
 
 (function () {
-  // Обработчик успешного и неудачного запроса/отправки данных:
-  var loadErrorListener = function (xhr, onLoad, onError) {
+  var UPLOAD_URL = 'https://js.dump.academy/candyshop';
+  var LOAD_URL = 'https://js.dump.academy/candyshop/data';
+  var SERVER_TIME = 10000;
+  var Code = {
+    OK: 200,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    INTERNAL_SERVER_ERROR: 500,
+  };
+
+  // обработка успешного/не успешного запроса ---------------------------------
+  var setup = function (onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.responseType = 'json';
+
     xhr.addEventListener('load', function () {
-      var error;
-      switch (xhr.status) {
-        case 200:
-          onLoad(xhr.response);
-          break;
-        case 400:
-          error = 'Неверный запрос';
-          break;
-        case 401:
-          error = 'Пользователь не авторизован';
-          break;
-        case 404:
-          error = 'Ничего не найдено';
-          break;
-
-        default:
-          error = 'Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText;
-      }
-
-      if (error) {
-        onError(error);
+      if (xhr.status === Code.OK) {
+        onLoad(xhr.response);
+      } else if (xhr.status === Code.BAD_REQUEST) {
+        onError('Неправильный запрос: ' + xhr.status);
+      } else if (xhr.status === Code.NOT_FOUND) {
+        onError('Ничего не найдено: ' + xhr.status);
+      } else if (xhr.status === Code.INTERNAL_SERVER_ERROR) {
+        onError('Внутренняя ошибка сервера: ' + xhr.status);
       }
     });
 
@@ -36,25 +37,81 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 10000; // 10s
+    xhr.timeout = SERVER_TIME;
+
+    return xhr;
   };
 
-  // Функция получения данных с сервера:
-  window.load = function (onLoad, onError) {
-    var URL = 'https://js.dump.academy/candyshop/data';
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    loadErrorListener(xhr, onLoad, onError);
-    xhr.open('GET', URL);
+  // загрузка данных с сервера ------------------------------------------------
+  var load = function (onLoad, onError) {
+    var xhr = setup(onLoad, onError);
+    xhr.open('GET', LOAD_URL);
     xhr.send();
   };
-  // Функция для отправки данных на сервер:
-  window.upload = function (data, onLoad, onError) {
-    var URL = 'https://js.dump.academy/candyshop';
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    loadErrorListener(xhr, onLoad, onError);
-    xhr.open('POST', URL);
+
+  // выгрузка данных на сервер ------------------------------------------------
+  var upload = function (data, onLoad, onError) {
+    var xhr = setup(onLoad, onError);
+    xhr.open('POST', UPLOAD_URL);
     xhr.send(data);
   };
+
+  window.backend = {
+    load: load,
+    upload: upload
+  };
+}());
+
+/*
+'use strict';
+
+(function () {
+
+  var URL_LOAD = 'https://js.dump.academy/candyshop/data';
+  var URL_SAVE = 'https://js.dump.academy/candyshop';
+  var OK_STATUS = 200;
+  var TIMEOUT = 10000;
+
+  window.backend = {
+    load: function (onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
+
+      xhr.addEventListener('load', function () {
+        if (xhr.status === OK_STATUS) {
+          onLoad(xhr.response);
+        } else {
+          onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        }
+      });
+      xhr.addEventListener('error', function () {
+        onError('Произошла ошибка соединения');
+      });
+      xhr.addEventListener('timeout', function () {
+        onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      });
+
+      xhr.timeout = TIMEOUT;
+
+      xhr.open('GET', URL_LOAD);
+      xhr.send();
+    },
+    save: function (data, onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
+
+      xhr.addEventListener('load', function () {
+        if (xhr.status === OK_STATUS) {
+          onLoad(xhr.response);
+        } else {
+          onError('Код ошибки: ' + xhr.status + '.');
+        }
+      });
+
+      xhr.open('POST', URL_SAVE);
+      xhr.send(data);
+    }
+  };
+
 })();
+ */
