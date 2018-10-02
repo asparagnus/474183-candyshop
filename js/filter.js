@@ -1,83 +1,104 @@
 'use strict';
 
 (function () {
-  // ФИЛЬТР ПО ЦЕНЕ:
-  var rangeFilter = document.querySelector('.range__filter'); // Блок слайдера
-  var rangeFillLine = rangeFilter.querySelector('.range__fill-line'); // Ползунок слайдера
-  var rangePricePinLeft = rangeFilter.querySelector('.range__btn--left'); // Левый пин
-  var rangePricePinRight = rangeFilter.querySelector('.range__btn--right'); // Правый пин
 
-  var mouseDownHandler = function (downEvt) { // Обработчик mouseDown
-    downEvt.preventDefault();
-    var currentPin = null;
-    var anotherPin = null;
-    var isLeft = true; // Левый или правый пин
-    var rangeFillLineMiddle = rangeFilter.offsetLeft + rangeFillLine.offsetLeft + rangeFillLine.offsetWidth / 2; // Расстояние до середины ползунка
-    if (downEvt.clientX <= rangeFillLineMiddle) { // Если ближе середины ползунка
-      currentPin = rangePricePinLeft; // то левый пин
-      anotherPin = rangePricePinRight;
-    } else if (downEvt.clientX > rangeFillLineMiddle) { // иначе
-      currentPin = rangePricePinRight; // правый пин
-      anotherPin = rangePricePinLeft;
-      isLeft = false;
-    }
+  var RANGE_BTN_WIDTH = 10;
+  var RANGE_WIDTH = 245;
 
-    var mouseMoveHandler = function (moveEvt) {
+  var catalogFilterRange = document.querySelector('.range__filter');
+  var leftRange = catalogFilterRange.querySelector('.range__btn--left');
+  var rightRange = catalogFilterRange.querySelector('.range__btn--right');
+  var rangePriceMin = document.querySelector('.range__price--min');
+  var rangePriceMax = document.querySelector('.range__price--max');
+  rangePriceMin.textContent = 0;
+  rangePriceMax.textContent = 100;
+  var rangeFillLine = document.querySelector('.range__fill-line');
+
+  var priceMx = Math.floor((rightRange.offsetLeft - RANGE_BTN_WIDTH / 2) / RANGE_WIDTH * 100);
+  var priceMn = Math.floor((leftRange.offsetLeft - RANGE_BTN_WIDTH / 2) / RANGE_WIDTH * 100);
+  rangePriceMax.textContent = priceMx;
+  rangePriceMin.textContent = priceMn;
+
+  var onLeftRangeMouseDown = function (evt) {
+    evt.preventDefault();
+    var startCoords = evt.clientX - RANGE_BTN_WIDTH / 2;
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
-      if (moveEvt.clientX >= rangeFilter.offsetLeft && moveEvt.clientX <= rangeFilter.offsetLeft + rangeFilter.offsetWidth && currentPin.offsetLeft !== anotherPin.offsetLeft) { // Ограничение движения ползунка за пределы ширины слайдера и друг друга
-        if (isLeft) { // Если левый пин
-          setPriceRange(currentPin, moveEvt, 'min', true);
-        } else { // Если правый пин
-          setPriceRange(currentPin, moveEvt, 'max', false);
-        }
-      } else {
-        // document.removeEventListener('mouseup', mouseUpHandler);
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
+      dragged = true;
+
+      var shift = startCoords - moveEvt.clientX;
+      startCoords = moveEvt.clientX;
+      leftRange.style.left = (leftRange.offsetLeft - shift) + 'px';
+      var leftRangePos = parseInt(leftRange.style.left, 10);
+
+      rangeFillLine.style.left = leftRangePos + RANGE_BTN_WIDTH / 2 + 'px';
+
+      if (leftRangePos < 0) {
+        leftRange.style.left = '0px';
+      } else if (leftRangePos > rightRange.offsetLeft) {
+        leftRange.style.left = rightRange.offsetLeft + 'px';
       }
     };
 
-    var mouseUpPreventHandler = function (evt) { // Запрещает отрабатывать событию mouseUp
-      evt.preventDefault();
-      document.removeEventListener('mouseup', mouseUpHandler);
-      document.removeEventListener('mousemove', mouseUpPreventHandler);
-    };
-
-    var mouseUpHandler = function (upEvt) { // Обработчик mouseUp
+    var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
 
-      if (isLeft) { // Если левый пин
-        setPriceRange(currentPin, upEvt, 'min', true);
-      } else { // Если правый пин
-        setPriceRange(currentPin, upEvt, 'max', false);
+      if (!dragged) {
+        leftRange.style.left = leftRange.offsetLeft + 'px';
       }
 
-      document.removeEventListener('mousemove', mouseMoveHandler); // Удалим все
-      document.removeEventListener('mouseup', mouseUpHandler); // обработчики при
-      document.removeEventListener('mousemove', mouseUpPreventHandler); // отпускании мыши
+      var priceMin = Math.floor(parseInt(leftRange.style.left, 10) / RANGE_WIDTH * 100);
+      rangePriceMin.textContent = priceMin;
     };
 
-    if (downEvt.target === currentPin) { // Если нажали на пин, то можно перетаскивать ползунок
-      document.addEventListener('mousemove', mouseMoveHandler);
-      document.addEventListener('mouseup', mouseUpHandler);
-    } else { // Если нажали не на один из пинов, то
-      document.addEventListener('mouseup', mouseUpHandler); // изменим значения, если пользователь совершил только клик без перемещений
-      document.addEventListener('mousemove', mouseUpPreventHandler); // запретим менять значения, если пользователь перемещал мышь без нажатого пина
-    }
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
+  leftRange.addEventListener('mousedown', onLeftRangeMouseDown);
 
-  var setPriceRange = function (pin, eventName, rangeClass, isLeft) { // Установка значений слайдера и цены
-    var rangePrice = document.querySelector('.range__price--' + rangeClass); // Минимальная цена
-    var pinWidth = pin.offsetWidth;
-    pin.style.left = (eventName.clientX - rangeFilter.offsetLeft - pinWidth / 2) + 'px'; // Применим через стили полож. пина
-    if (isLeft) {
-      rangeFillLine.style.left = (eventName.clientX - rangeFilter.offsetLeft) + 'px'; // Применим через стили крайнее левое полож. ползунка
-    } else {
-      rangeFillLine.style.right = (rangeFilter.offsetWidth - pin.offsetLeft - pinWidth / 2) + 'px'; // Применим через стили крайнее правое полож. ползунка
-    }
-    rangePrice.textContent = Math.round((pin.offsetLeft + pinWidth / 2) / 245 * 1400 + 100); // Установим значение цены, соответствующее положению пина
+  var onRightRangeMouseDown = function (evt) {
+    evt.preventDefault();
+    var startCoords = evt.clientX - RANGE_BTN_WIDTH / 2;
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      dragged = true;
+
+      var shift = startCoords - moveEvt.clientX;
+      startCoords = moveEvt.clientX;
+      rightRange.style.left = (rightRange.offsetLeft - shift) + 'px';
+      var rightRangePos = parseInt(rightRange.style.left, 10);
+
+      rangeFillLine.style.right = catalogFilterRange.offsetWidth - rightRangePos + 'px';
+
+      if (rightRangePos > RANGE_WIDTH) {
+        rightRange.style.left = RANGE_WIDTH + 'px';
+      } else if (rightRangePos < leftRange.offsetLeft) {
+        rightRange.style.left = leftRange.offsetLeft + 'px';
+      }
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      if (!dragged) {
+        rightRange.style.left = rightRange.offsetLeft + 'px';
+      }
+
+      var priceMax = Math.floor(parseInt(rightRange.style.left, 10) / RANGE_WIDTH * 100);
+      rangePriceMax.textContent = priceMax;
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
+  rightRange.addEventListener('mousedown', onRightRangeMouseDown);
 
-  rangeFilter.addEventListener('mousedown', mouseDownHandler);
-  rangeFilter.addEventListener('mousedown', mouseDownHandler);
 })();
