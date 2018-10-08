@@ -1,31 +1,19 @@
 'use strict';
 
 (function () {
-  var UPLOAD_URL = 'https://js.dump.academy/candyshop';
-  var LOAD_URL = 'https://js.dump.academy/candyshop/data';
-  var SERVER_TIME = 10000;
-  var Code = {
-    OK: 200,
-    BAD_REQUEST: 400,
-    NOT_FOUND: 404,
-    INTERNAL_SERVER_ERROR: 500,
-  };
+  var GET_URL = ' https://js.dump.academy/candyshop/data';
+  var POST_URL = 'https://js.dump.academy/candyshop';
+  var STATUS_OK = 200;
 
-  // обработка успешного/не успешного запроса ---------------------------------
-  var setup = function (onLoad, onError) {
+  var loadData = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
-
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === Code.OK) {
+      if (xhr.status === STATUS_OK) {
         onLoad(xhr.response);
-      } else if (xhr.status === Code.BAD_REQUEST) {
-        onError('Неправильный запрос: ' + xhr.status);
-      } else if (xhr.status === Code.NOT_FOUND) {
-        onError('Ничего не найдено: ' + xhr.status);
-      } else if (xhr.status === Code.INTERNAL_SERVER_ERROR) {
-        onError('Внутренняя ошибка сервера: ' + xhr.status);
+      } else {
+        onError('Статус ответа ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -37,81 +25,39 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = SERVER_TIME;
+    xhr.timeout = 10000;
 
-    return xhr;
-  };
-
-  // загрузка данных с сервера ------------------------------------------------
-  var load = function (onLoad, onError) {
-    var xhr = setup(onLoad, onError);
-    xhr.open('GET', LOAD_URL);
+    xhr.open('GET', GET_URL);
     xhr.send();
   };
 
-  // выгрузка данных на сервер ------------------------------------------------
-  var upload = function (data, onLoad, onError) {
-    var xhr = setup(onLoad, onError);
-    xhr.open('POST', UPLOAD_URL);
+  var saveData = function (data, onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status === STATUS_OK) {
+        onLoad(xhr.response);
+      } else {
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+    xhr.timeout = 10000;
+
+    xhr.open('POST', POST_URL);
     xhr.send(data);
   };
 
   window.backend = {
-    load: load,
-    upload: upload
+    loadData: loadData,
+    saveData: saveData
   };
-}());
-
-/*
-'use strict';
-
-(function () {
-
-  var URL_LOAD = 'https://js.dump.academy/candyshop/data';
-  var URL_SAVE = 'https://js.dump.academy/candyshop';
-  var OK_STATUS = 200;
-  var TIMEOUT = 10000;
-
-  window.backend = {
-    load: function (onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === OK_STATUS) {
-          onLoad(xhr.response);
-        } else {
-          onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-        }
-      });
-      xhr.addEventListener('error', function () {
-        onError('Произошла ошибка соединения');
-      });
-      xhr.addEventListener('timeout', function () {
-        onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-      });
-
-      xhr.timeout = TIMEOUT;
-
-      xhr.open('GET', URL_LOAD);
-      xhr.send();
-    },
-    save: function (data, onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === OK_STATUS) {
-          onLoad(xhr.response);
-        } else {
-          onError('Код ошибки: ' + xhr.status + '.');
-        }
-      });
-
-      xhr.open('POST', URL_SAVE);
-      xhr.send(data);
-    }
-  };
-
 })();
- */
